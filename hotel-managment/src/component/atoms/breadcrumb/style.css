@@ -1,0 +1,30 @@
+.breadcrumb-component ol {
+    margin-bottom: 0;
+}
+
+.breadcrumb-component .breadcrumb-item {
+    font-size: 1rem;
+	display: flex;
+	align-items: center;
+	font-weight: 600;
+	color: #2e6ae6;
+
+}
+
+.breadcrumb-component .breadcrumb-item a {
+    color: #2e6ae6;
+}
+
+.breadcrumb-component .breadcrumb-item::before {
+    font-size: 0.85rem;
+	color: #2e6ae6;
+    content: '';
+	font-family: 'Font Awesome 5 Free';
+	font-weight: 900;
+	transform: translateY(2px);
+}
+
+.breadcrumb-component .breadcrumb-item .active {
+    color: #2e6ae6;
+}
+

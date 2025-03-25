@@ -1,0 +1,90 @@
+.side-bar {
+    width: 300px;
+	display: flex;
+	flex-direction: column;
+	color:#25396f;
+	padding: 1rem;
+	transition: width 0.5s ease;
+	overflow: auto;
+}
+
+.side-bar::-webkit-scrollbar {
+    width: 6px;
+	cursor: pointer;
+}
+
+.side-bar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+	border-radius: 8px;
+}
+
+.side-bar::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+	border-radius: 8px;
+}
+
+.side-bar::-webkit-scrollbar-thumb:hover {
+    background: #787878;
+}
+
+.side-bar:not(.hide-sidebar) {
+    scrollbar-gutter: stable;
+}
+
+.side-bar.hide-sidebar {
+    width: calc(40px + 2rem);
+}
+
+.side-bar__icon {
+    width: 40px;
+	min-width: 40px;
+	height: 38px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.side-bar__text {
+    width: 100%;
+	padding-right: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.side-bar__item__main {
+    display: flex;
+    cursor: pointer;
+    gap: 10px;
+    transition: all 0.5s ease;
+    padding: 8px 0;
+    margin: 4px 0;
+}
+
+.side-bar__item__main.big-padding {
+    padding: 8px;
+}
+
+.side-bar__item__main:hover {
+    background-color: #f0f1f5;
+}
+
+.side-bar__item__main.selected {
+    background-color: #435ebe;
+	color: white;
+}
+
+@media only screen and (max-height: 700px) {
+	.side-bar.hide-sidebar {
+		width: calc(48px + 2rem);
+	}
+}
+
+
+
+
+
+
+

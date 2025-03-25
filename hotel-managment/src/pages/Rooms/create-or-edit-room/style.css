@@ -1,0 +1,11 @@
+.home-containers {
+    width: 20%;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.save-button {
+    display: flex;
+    justify-content: right;
+    margin-top: 15px;
+}

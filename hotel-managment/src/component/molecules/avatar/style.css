@@ -1,0 +1,34 @@
+.header-avatar {
+	height: 37px;
+	aspect-ratio: 1;
+}
+
+.header-avatar-modal-item {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	cursor: pointer;
+	padding: 5px 40px 5px 10px;
+}
+
+.header-avatar-modal-item:hover {
+	background-color: lightblue;
+}
+
+.custom-dropdown-container {
+    position: absolute;
+    z-index: 100;
+    white-space: nowrap;
+    background-color: white;
+    opacity: 0;
+	width: 100%;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.custom-dropdown-container.show {
+    pointer-events: inherit;
+    opacity: 1;
+    transform: translateY(0);
+}
