@@ -26,6 +26,12 @@ export default function RestaurantOrdersList() {
   const [filterStatus, setFilterStatus] = useState("");
 
   useEffect(() => {
+    setFilterUser([]);
+  }, []);
+
+  console.log(roomsByUsers);
+
+  useEffect(() => {
     handleGetOrderRooms();
     getListRooms();
     getListUsers();

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
-import { useState } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { setFullName } from "../../redux/signin";
@@ -11,58 +11,102 @@ import "./style.css";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingIndiciator from "../../component/loading-indiciator";
 
+interface LoginResponse {
+  success: boolean;
+  user: {
+    userName: string;
+    accessToken: string;
+  };
+}
+
+interface FormErrors {
+  userName: string;
+  password: string;
+}
+
 function Signin() {
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    userName: "",
+    password: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [isRequired, setIsRequired] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({
+    userName: "",
+    password: "",
+  });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: any) => {
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {
+      userName: "",
+      password: "",
+    };
+    let isValid = true;
+
+    if (!formData.userName.trim()) {
+      newErrors.userName = "Vui lòng nhập tên đăng nhập";
+      isValid = false;
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Vui lòng nhập mật khẩu";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
-      if (userName.length > 0 && password.length > 0) {
-        setIsRequired(false);
+      const response = await axios.post<LoginResponse>(
+        "http://localhost:8080/api/v1/login",
+        formData
+      );
 
-        const response: any = await axios.post(
-          "http://localhost:8080/api/v1/login",
-          {
-            userName: userName,
-            password: password,
-          }
-        );
-
-        // Kiểm tra kết quả đăng nhập thành công
-        if (response?.data?.success) {
-          // Cập nhật userFullName trong Redux store
-          dispatch(setFullName(response?.data?.user?.userName));
-          localStorage.setItem(
-            "accessToken",
-            response?.data?.user?.accessToken
-          );
-          sessionStorage.setItem("user", JSON.stringify(response?.data?.user));
-          // Đăng nhập thành công, chuyển hướng đến màn hình Home
-          toast.success("Đăng nhập thành công");
-          navigate("/users");
-        }
-      } else {
-        setIsRequired(true);
+      if (response.data.success) {
+        dispatch(setFullName(response.data.user.userName));
+        localStorage.setItem("accessToken", response.data.user.accessToken);
+        sessionStorage.setItem("user", JSON.stringify(response.data.user));
+        toast.success("Đăng nhập thành công");
+        navigate("/users");
       }
     } catch (error) {
-      // Xử lý lỗi ở đây
-      toast.error("Đăng nhập thất bại");
+      if (axios.isAxiosError(error)) {
+        const errorMessage = "Đăng nhập thất bại";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleChange = (f: Function) => (e: any) => {
-    const value = e.target.value;
-    f(value);
-  };
+  const handleChange =
+    (field: keyof typeof formData) => (e: ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: e.target.value,
+      }));
+      // Clear error when user starts typing
+      if (errors[field]) {
+        setErrors((prev) => ({
+          ...prev,
+          [field]: "",
+        }));
+      }
+    };
+
   return (
     <div className="container p-0">
       {isLoading && <LoadingIndiciator />}
@@ -80,17 +124,17 @@ function Signin() {
                 Tên đăng nhập *
               </Form.Label>
               <Form.Control
-                onChange={handleChange(setUserName)}
-                value={userName}
+                onChange={handleChange("userName")}
+                value={formData.userName}
                 type="text"
                 required
-                isInvalid={isRequired && userName === ""}
+                isInvalid={!!errors.userName}
               />
               <Form.Control.Feedback
                 type="invalid"
                 style={{ fontSize: "12px" }}
               >
-                Vui lòng nhập tên đăng nhập
+                {errors.userName}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -99,23 +143,27 @@ function Signin() {
                 Mật khẩu *
               </Form.Label>
               <Form.Control
-                value={password}
-                onChange={handleChange(setPassword)}
+                value={formData.password}
+                onChange={handleChange("password")}
                 type="password"
                 className="form-control"
                 required
-                isInvalid={isRequired && password === ""}
+                isInvalid={!!errors.password}
               />
               <Form.Control.Feedback
                 type="invalid"
                 style={{ fontSize: "12px" }}
               >
-                Vui lòng nhập mập khẩu
+                {errors.password}
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" className="btn btn-primary mt-4 w-100">
-              Đăng nhập
+            <Button
+              type="submit"
+              className="btn btn-primary mt-4 w-100"
+              disabled={isLoading}
+            >
+              {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
           </Form>
         </div>
